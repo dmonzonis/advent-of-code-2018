@@ -37,6 +37,25 @@ class GuardManager:
             raise KeyError("Guard not found.")
         return np.argmax(self._guard_dict[guard_id])
 
+    def find_most_slept_minute_all_guards(self):
+        """Find the most slept minute among all guards.
+
+        Return the guard's id and the minute.
+        """
+        current_id = current_minute = current_max = 0
+
+        for guard_id, timetable in self._guard_dict.items():
+            max_minute = self.find_most_slept_minute(guard_id)
+            # Get the actual number of minutes
+            max_minute_count = self._guard_dict[guard_id][max_minute]
+            # Update current if necessary
+            if max_minute_count > current_max:
+                current_minute = max_minute
+                current_max = max_minute_count
+                current_id = guard_id
+        
+        return current_id, current_minute
+
 
 def time_to_minutes(time):
     """Translate a datetime time to the minute of the day."""
@@ -98,6 +117,10 @@ def main():
     laziest_guard = guard_manager.find_laziest_guard()
     mins_by_laziest_guard = guard_manager.find_most_slept_minute(laziest_guard)
     print(laziest_guard * mins_by_laziest_guard)
+
+    # Part 2
+    guard_id, max_minute = guard_manager.find_most_slept_minute_all_guards()
+    print(guard_id * max_minute)
 
 
 if __name__ == "__main__":
