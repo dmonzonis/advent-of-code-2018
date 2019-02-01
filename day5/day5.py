@@ -15,12 +15,30 @@ def process_polymer(polymer):
     return polymer
 
 
+def best_reduced_polymer(polymer):
+    best = polymer
+    units = set(polymer.lower())
+
+    for unit in units:
+        # Remove unit from the polymer
+        reduced_polymer = polymer.replace(unit, '').replace(unit.upper(), '')
+        processed = process_polymer(reduced_polymer)
+        if len(processed) < len(best):
+            best = processed
+    
+    return best
+
+
 def main():
     with open("input") as f:
         polymer = f.read().strip('\n')
-    print(len(polymer))
+
+    # Part 1
     processed = process_polymer(polymer)
     print(len(processed))
+
+    # Part 2
+    print(len(best_reduced_polymer(polymer)))
 
 
 if __name__ == "__main__":
