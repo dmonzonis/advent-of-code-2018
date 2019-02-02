@@ -1,4 +1,5 @@
 from collections import namedtuple
+import numpy as np
 
 
 Coord = namedtuple('Coord', ['x', 'y'])
@@ -71,6 +72,29 @@ def find_largest_area(node_dict):
     return max(node_dict.keys(), key=lambda n: len(node_dict[n]))
 
 
+def manhattan_sum(node, node_dict):
+    """
+    Return the sum of manhattan distances from the given node
+    to all the nodes in the dict.
+    """
+    return sum(manhattan_distance(node, n) for n in node_dict.keys())
+
+
+def find_valid_area(node_dict):
+    """
+    Finds the area of the nodes that satisfy the condition that
+    the sum of their distances to all other nodes is smaller
+    than 10000.
+    """
+    max_axis = 500  # Use a big enough grid
+    valid = np.zeros((max_axis, max_axis)).astype(bool)
+    for x in range(max_axis):
+        for y in range(max_axis):
+            if manhattan_sum(Coord(x, y), node_dict) < 10000:
+                valid[x, y] = True
+    return valid.sum()
+
+
 def main():
     with open("input") as f:
         inp = f.read().splitlines()
@@ -86,6 +110,9 @@ def main():
     largest_node = find_largest_area(node_dict)
     # Print the area
     print(len(node_dict[largest_node]))
+
+    # Part 2
+    print(find_valid_area(node_dict))
 
 
 if __name__ == "__main__":
