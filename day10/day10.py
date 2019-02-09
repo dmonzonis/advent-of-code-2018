@@ -6,8 +6,6 @@ import pytesseract
 
 Vector = namedtuple('Vector', ['x', 'y'])
 
-MAP_SIZE = 100
-
 
 class Star:
     def __init__(self, position, velocity):
@@ -84,8 +82,10 @@ class StarMap:
 
 def fill_star_map(star_map, data):
     for line in data:
-        match = re.match(r'position=<\s?(-?\d+), \s?(-?\d+)> velocity=<\s?(-?\d+), \s?(-?\d+)>',
-                         line)
+        match = re.match(
+            r'position=<\s?(-?\d+), \s?(-?\d+)> velocity=<\s?(-?\d+), \s?(-?\d+)>',
+            line
+        )
         x, y, dx, dy = [int(n) for n in match.groups()]
         pos = Vector(x, y)
         velocity = Vector(dx, dy)
