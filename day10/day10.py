@@ -99,6 +99,7 @@ def find_messages(star_map, times=100000):
         if img is not None:
             message = pytesseract.image_to_string(img)
             if message:
+                print(f"Message found at t={t} seconds")
                 print(message)
                 img.show()
         star_map.update()
