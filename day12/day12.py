@@ -24,10 +24,7 @@ def evolution_step(state, rules, leftmost):
     i = -1
     while i <= len(state):
         surroundings = get_surroundings(i, state)
-        if surroundings not in rules:
-            cell = '.'
-        else:
-            cell = rules[surroundings]
+        cell = rules[surroundings]
         if not ((i == -1 or i == len(state)) and cell == '.'):
             new_state.append(cell)
             if i == -1:
