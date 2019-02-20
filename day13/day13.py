@@ -11,8 +11,13 @@ class Railmap:
 
     def __init__(self, railmap):
         self.carts = []
+        self.initial_railmap = copy.deepcopy(railmap)
         self.collision = False
         self.railmap = railmap
+        self.build_railmap()
+
+    def reset(self):
+        self.railmap = copy.deepcopy(self.initial_railmap)
         self.build_railmap()
 
     def build_railmap(self):
@@ -30,9 +35,15 @@ class Railmap:
                         self.railmap[y][x] = '|'
                     cart_num += 1
 
-    def tick(self, stop_on_collision=True):
+    def find_first_collision(self):
+        while not self.collision:
+            result = self.tick(stop_on_collision=True)
+        return result[0], result[1]
+
+    def tick(self, stop_on_collision=False, remove_on_collision=False):
         # Move all carts
-        for cart in self.carts:
+        for i in range(len(self.carts)):
+            cart = self.carts[i]
             cart.tick()
 
             # Check if cart has to turn
@@ -47,6 +58,17 @@ class Railmap:
             self.collision = self.check_collision(cart)
             if self.collision and stop_on_collision:
                 return x, y
+
+            if self.collision and remove_on_collision:
+                # Remove the current cart
+                self.carts.remove(cart)
+                i -= 1
+                # Remove the cart with which it collided
+                for other in self.carts:
+                    if other.pos == (x, y):
+                        if self.carts.index(other) <= i:
+                            i -= 1
+                        self.carts.remove(other)
 
         # Sort the cart list by their coordinates
         sorted(self.carts, key=lambda c: (c.pos[1], c.pos[0]))
@@ -105,9 +127,8 @@ def main():
     railmap = Railmap(railmap)
 
     # Part 1
-    while not railmap.collision:
-        collision_pos = railmap.tick(stop_on_collision=True)
-    print(collision_pos[0], collision_pos[1])
+    x, y = railmap.find_first_collision()
+    print(f"First collision: {x}, {y}")
 
 
 if __name__ == "__main__":
